@@ -1,0 +1,409 @@
+\documentclass{beamer}
+
+% Tema y colores - usando un tema más compacto
+\usetheme{Frankfurt}
+\usecolortheme{whale}
+\useoutertheme{miniframes}
+
+% Paquetes
+\usepackage[spanish]{babel}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows,positioning,decorations.pathreplacing,calligraphy}
+
+% Configuración para reducir tamaño de fuente y espacios
+\setbeamerfont{title}{size=\small}
+\setbeamerfont{subtitle}{size=\footnotesize}
+\setbeamerfont{frametitle}{size=\normalsize}
+\setbeamerfont{framesubtitle}{size=\footnotesize}
+\setbeamerfont{itemize/enumerate body}{size=\footnotesize}
+\setbeamerfont{itemize/enumerate subbody}{size=\scriptsize}
+\setbeamerfont{caption}{size=\scriptsize}
+\setbeamerfont{description item}{size=\footnotesize}
+\setbeamerfont{normal text}{size=\footnotesize}
+
+% Reducir márgenes y espaciado
+\setbeamersize{text margin left=5pt,text margin right=5pt}
+\setlength{\leftmargini}{10pt}
+\setlength{\leftmarginii}{8pt}
+
+% Reducir espaciado vertical
+\setlength{\parskip}{1pt}
+\renewcommand{\baselinestretch}{0.9}
+
+% Información del título
+\title[Inventario y Enrutamiento]{Resolución del Problema Integrado de Enrutamiento y Gestión de Inventarios}
+\subtitle{Aplicación de Programación Lineal Entera Mixta}
+\author[Estudiante]{Etzel Yuliza Peralta Lopez}
+\institute[Universidad]{Universidad Nacional del Altiplano Puno}
+% Eliminamos la fecha
+\date{}
+
+\begin{document}
+	
+	% Diapositiva del título
+	\begin{frame}
+		\titlepage
+	\end{frame}
+	
+	% Diapositiva 1: Definición del Problema
+	\begin{frame}{Definición del Problema}
+		\begin{columns}
+			\column{0.55\textwidth}
+			\begin{itemize}
+				\item \textbf{Problema Multi-Vehicle IRP}
+				\item \textbf{Objetivo:} Minimizar costos de:
+				\begin{itemize}
+					\item Enrutamiento
+					\item Gestión de inventario
+				\end{itemize}
+				\item \textbf{Consideraciones:}
+				\begin{itemize}
+					\item Múltiples vehículos
+					\item Horizonte de planificación definido
+					\item Demandas conocidas por cliente
+					\item Capacidades limitadas (almacén/vehículos)
+				\end{itemize}
+			\end{itemize}
+			
+			\column{0.45\textwidth}
+			\begin{figure}
+				\centering
+				\begin{tikzpicture}[scale=0.8]
+					% Depósito central
+					\node[rectangle,draw,fill=blue!20] (depot) at (0,0) {Depósito};
+					
+					% Clientes
+					\node[circle,draw,fill=green!20] (c1) at (-2,2) {C1};
+					\node[circle,draw,fill=green!20] (c2) at (2,2) {C2};
+					\node[circle,draw,fill=green!20] (c3) at (-2,-2) {C3};
+					\node[circle,draw,fill=green!20] (c4) at (2,-2) {C4};
+					
+					% Rutas - vehículo 1
+					\draw[->,thick,red] (depot) -- (c1);
+					\draw[->,thick,red] (c1) -- (c2);
+					\draw[->,thick,red] (c2) -- (depot);
+					
+					% Rutas - vehículo 2
+					\draw[->,thick,blue] (depot) -- (c3);
+					\draw[->,thick,blue] (c3) -- (c4);
+					\draw[->,thick,blue] (c4) -- (depot);
+					
+					% Leyenda
+					\node[red] at (1.5,3) {Vehículo 1};
+					\node[blue] at (1.5,-3) {Vehículo 2};
+				\end{tikzpicture}
+				\caption{Ejemplo de rutas con múltiples vehículos}
+			\end{figure}
+		\end{columns}
+	\end{frame}
+	
+	% Diapositiva 2: Formulación Matemática
+	\begin{frame}{Formulación Matemática}
+		\begin{columns}
+			\column{0.62\textwidth}
+			\textbf{Función objetivo:}
+			\begin{equation*}
+				\min \sum_{i \in V}\sum_{t \in M}H_i I_{it} + \sum_{i,j \in V}\sum_{k \in K}\sum_{t \in T}Costo_{ij}X_{ijkt}
+			\end{equation*}
+			
+			\vspace{0.2cm}
+			\textbf{Variables de decisión:} {\small
+				\begin{itemize}
+					\item $X_{ijkt}$: Si el arco $ij$ es usado por vehículo $k$ en periodo $t$
+					\item $I_{it}$: Nivel de inventario del cliente $i$ al final del periodo $t$
+					\item $q_{ikt}$: Cantidad enviada al cliente $i$ por vehículo $k$ en $t$
+					\item $Y_{ikt}$: Si el cliente $i$ es visitado por vehículo $k$ en $t$
+			\end{itemize}}
+			
+			\vspace{0.2cm}
+			\textbf{Restricciones principales:} {\small
+				\begin{itemize}
+					\item Balance de inventario: $I_{it} = I_{it-1} + \sum_{k \in K} q_{ikt} - d_{it}$
+					\item Capacidad de almacenamiento: $I_{it} \leq C_i$
+					\item Capacidad de vehículos: $\sum_{i \in V1} q_{ikt} \leq QY_{0kt}$
+					\item Conservación de flujo: $\sum_{j \in V} X_{ijkt} = Y_{ikt}$
+			\end{itemize}}
+			
+			\column{0.38\textwidth}
+			\begin{figure}
+				\centering
+				\begin{tikzpicture}[scale=0.7]
+					% Componentes del costo - rectangulos más largos
+					\draw[fill=blue!20] (0,0) rectangle (5,0.8) node[pos=.5,font=\footnotesize] {Costo Total};
+					
+					\draw[fill=green!20] (0,1.8) rectangle (2.2,2.6) node[pos=.5,font=\footnotesize] {Inventario};
+					\draw[fill=red!20] (2.8,1.8) rectangle (5,2.6) node[pos=.5,font=\footnotesize] {Transporte};
+					
+					\draw[->,thick] (1.1,1.8) -- (2.5,0.8);
+					\draw[->,thick] (3.9,1.8) -- (2.5,0.8);
+					
+					% Variables
+					\node[draw,ellipse,fill=yellow!20,font=\footnotesize] at (1.1,3.6) {$I_{it}$};
+					\draw[->,thick] (1.1,3.2) -- (1.1,2.6);
+					
+					\node[draw,ellipse,fill=yellow!20,font=\footnotesize] at (3.9,3.6) {$X_{ijkt}$};
+					\draw[->,thick] (3.9,3.2) -- (3.9,2.6);
+				\end{tikzpicture}
+				\caption{\footnotesize Estructura del modelo}
+			\end{figure}
+			\end{columns}
+		\end{frame}
+	
+	% Diapositiva 3: Políticas de Gestión de Inventario
+	\begin{frame}{Políticas de Gestión de Inventario}
+		\begin{columns}[T]
+			\column{0.48\textwidth}
+			\textbf{Maximum Level (ML):} {\footnotesize
+				\begin{itemize}\setlength{\itemsep}{1pt}
+					\item Repone según demanda del cliente
+					\item No excede capacidad máxima
+					\item \textbf{Ecuaciones clave:}
+				\end{itemize}
+				\begin{align*}
+					\sum_{k \in K} q_{ikt} &\leq C_i - I_{it-1}\\
+					q_{ikt} &\leq C_i Y_{ikt}
+			\end{align*}}
+			
+			\column{0.48\textwidth}
+			\textbf{Order Up to Level (OU):} {\footnotesize
+				\begin{itemize}\setlength{\itemsep}{1pt}
+					\item Llena completamente el inventario
+					\item Alcanza nivel máximo de almacén
+					\item \textbf{Ecuación adicional:}
+				\end{itemize}
+				\begin{align*}
+					q_{ikt} \geq C_i Y_{it} - I_{it-1}
+			\end{align*}}
+		\end{columns}
+		
+		\vspace{0.2cm}
+		\begin{figure}
+			\centering
+			\begin{tikzpicture}[scale=0.65]
+				% ML Policy - más a la izquierda
+				\begin{scope}[xshift=-0.5cm]
+					\draw[thick] (0,0) -- (4,0);
+					\draw[thick] (0,0) -- (0,2);
+					\node[below,font=\footnotesize] at (2,0) {Tiempo};
+					\node[left, rotate=90,font=\footnotesize] at (-0.5,1) {Inventario};
+					
+					\draw[thick,blue!50,fill=blue!20] (0.2,0) rectangle (0.8,0.8);
+					\draw[thick,blue!50,fill=blue!20] (1.2,0) rectangle (1.8,1.2);
+					\draw[thick,blue!50,fill=blue!20] (2.2,0) rectangle (2.8,0.6);
+					\draw[thick,blue!50,fill=blue!20] (3.2,0) rectangle (3.8,1.0);
+					
+					\draw[dashed] (0,1.5) -- (4,1.5);
+					\node[right,font=\footnotesize] at (4,1.5) {Máx};
+					\node[below,font=\footnotesize] at (2,-0.5) {ML: Variable};
+				\end{scope}
+				
+				% OU Policy - más espacio entre gráficos
+				\begin{scope}[xshift=6.5cm]
+					\draw[thick] (0,0) -- (4,0);
+					\draw[thick] (0,0) -- (0,2);
+					\node[below,font=\footnotesize] at (2,0) {Tiempo};
+					
+					\draw[thick,red!50,fill=red!20] (0.2,0) rectangle (0.8,1.5);
+					\draw[thick,red!50,fill=red!20] (1.2,0) rectangle (1.8,1.5);
+					\draw[thick,red!50,fill=red!20] (2.2,0) rectangle (2.8,1.5);
+					\draw[thick,red!50,fill=red!20] (3.2,0) rectangle (3.8,1.5);
+					
+					\draw[dashed] (0,1.5) -- (4,1.5);
+					\node[right,font=\footnotesize] at (4,1.5) {Máx};
+					\node[below,font=\footnotesize] at (2,-0.5) {OU: Siempre máximo};
+				\end{scope}
+			\end{tikzpicture}
+			\caption{\footnotesize Comparación de políticas de inventario}
+		\end{figure}
+	\end{frame}
+	
+	% Diapositiva 4: Eliminación de Sub-tours
+	\begin{frame}{Eliminación de Sub-tours}
+		\begin{columns}[T]
+			\column{0.48\textwidth}
+			\textbf{Tres métodos para eliminar sub-tours:} {\footnotesize
+				\begin{enumerate}\setlength{\itemsep}{1pt}
+					\item \textbf{Modelo General:} Variables de carga acumulada
+					\begin{align*}
+						U_{jkt} \geq U_{ikt} + q_{jkt} + QX_{ijkt} - Q
+					\end{align*}
+					
+					\item \textbf{Modelo de Flujos:} Variables de flujo $f_{ijkt}$
+					\begin{align*}
+						\sum_{j} f_{0jkt} &= \sum_{j} Y_{jkt} \\
+						\sum_{j} f_{ijkt} &= \sum_{j} f_{jikt} - Y_{ikt}
+					\end{align*}
+					
+					\item \textbf{Método MTZ:} Define orden de visita
+					\begin{align*}
+						W_{0kt} &= 0 \\
+						W_{jkt} &\geq W_{ikt} + 1 - n(1 - X_{ijkt})
+					\end{align*}
+			\end{enumerate}}
+			
+			\column{0.48\textwidth}
+			\begin{minipage}{\textwidth}
+				\centering
+				\textbf{Problema de sub-tours}
+				
+				\begin{tikzpicture}[scale=0.55]
+					% Tour principal (D-A-B-D)
+					\draw[thick] (0,1) circle (0.25);
+					\node[font=\footnotesize] at (0,1) {D};
+					
+					\draw[thick] (1.5,2) circle (0.25);
+					\node[font=\footnotesize] at (1.5,2) {A};
+					
+					\draw[thick] (3,1) circle (0.25);
+					\node[font=\footnotesize] at (3,1) {B};
+					
+					\draw[->,thick] (0.25,1.1) -- (1.3,1.9);
+					\draw[->,thick] (1.7,1.9) -- (2.8,1.2);
+					\draw[->,thick] (2.9,0.8) -- (0.1,0.8);
+					
+					% Sub-tour separado (C-E-C)
+					\draw[thick] (0.5,-0.5) circle (0.25);
+					\node[font=\footnotesize] at (0.5,-0.5) {C};
+					
+					\draw[thick] (2.5,-0.5) circle (0.25);
+					\node[font=\footnotesize] at (2.5,-0.5) {E};
+					
+					\draw[->,thick,red] (0.75,-0.5) -- (2.25,-0.5);
+					\draw[->,thick,red] (2.5,-0.75) -- (2.5,-1.25) -- (0.5,-1.25) -- (0.5,-0.75);
+					
+					% Etiquetas de tours
+					\node[above,font=\scriptsize] at (1.5,2.2) {Tour 1};
+					\node[below,font=\scriptsize] at (1.5,-1.4) {Tour 2 (sub-tour)};
+				\end{tikzpicture}
+				
+				\vspace{0.15cm}
+				\textbf{Solución correcta (ruta única)}
+				
+				\begin{tikzpicture}[scale=0.55]
+					% Una sola ruta conectada
+					\draw[thick] (1.5,1.5) circle (0.25);
+					\node[font=\footnotesize] at (1.5,1.5) {D};
+					
+					\draw[thick] (3,2.5) circle (0.25);
+					\node[font=\footnotesize] at (3,2.5) {A};
+					
+					\draw[thick] (4.5,1.5) circle (0.25);
+					\node[font=\footnotesize] at (4.5,1.5) {B};
+					
+					\draw[thick] (0,0) circle (0.25);
+					\node[font=\footnotesize] at (0,0) {C};
+					
+					\draw[thick] (3,0) circle (0.25);
+					\node[font=\footnotesize] at (3,0) {E};
+					
+					% Ruta conectada
+					\draw[->,thick,blue] (1.75,1.6) -- (2.8,2.4);
+					\draw[->,thick,blue] (3.2,2.4) -- (4.3,1.7);
+					\draw[->,thick,blue] (4.4,1.25) -- (3.2,0.2);
+					\draw[->,thick,blue] (2.75,0) -- (0.25,0);
+					\draw[->,thick,blue] (0,0.25) -- (1.35,1.35);
+					
+					% Etiqueta de ruta única
+					\node[above,font=\scriptsize] at (2.25,2.8) {Ruta única (D-A-B-E-C-D)};
+				\end{tikzpicture}
+			\end{minipage}
+		\end{columns}
+	\end{frame}
+	
+	% Diapositiva 5: Resultados y Conclusiones
+	\begin{frame}{Resultados y Conclusiones}
+		\begin{columns}[T]
+			\column{0.55\textwidth}
+			\textbf{Resultados principales:}
+			
+			\begin{minipage}{\textwidth}
+				{\footnotesize
+					\begin{center}
+						\begin{tabular}{|l|c|c|c|}
+							\hline
+							\textbf{Método} & \textbf{Flujos} & \textbf{MTZ} & \textbf{General} \\
+							\hline
+							GAP promedio & 1.49\% & 6.62\% & 9.21\% \\
+							Tiempo (s) & 655 & 728 & 1123 \\
+							\hline
+						\end{tabular}
+				\end{center}}
+			\end{minipage}
+			
+			\vspace{0.2cm}
+			{\footnotesize \textbf{Hallazgos:}}
+			\begin{itemize}\setlength{\itemsep}{0pt}
+				\item \textbf{Mejor:} Modelo de Flujos + política ML
+				\item \textbf{Intermedio:} Método MTZ 
+				\item \textbf{Menor rendimiento:} Modelo General
+			\end{itemize}
+			
+			\vspace{0.2cm}
+			{\footnotesize \textbf{Conclusiones:}}
+			\begin{itemize}\setlength{\itemsep}{0pt}
+				\item Metodología adaptable a diferentes aplicaciones
+				\item Buena calidad en instancias pequeñas/medianas
+				\item Limitante: Alta complejidad computacional
+			\end{itemize}
+			
+			\vspace{0.2cm}
+			{\footnotesize \textbf{Trabajo futuro:}}
+			\begin{itemize}\setlength{\itemsep}{0pt}
+				\item Desarrollo de heurísticas y metaheurísticas
+				\item Modelos con demandas estocásticas
+				\item Manejo de productos perecederos
+			\end{itemize}
+			
+			\column{0.45\textwidth}
+			\begin{tikzpicture}[scale=0.6]
+				% Título
+				\node[font=\footnotesize] at (2.5,4.5) {\textbf{Comparativa de métodos}};
+				
+				% Gráfico de barras - Tiempo computacional
+				\begin{scope}
+					\draw[thick] (0,0) -- (5,0);
+					\draw[thick] (0,0) -- (0,3);
+					\node[above,font=\footnotesize] at (2.5,3.2) {Tiempo (s)};
+					
+					\draw[fill=red!50] (0.8,0) rectangle (1.7,3);
+					\draw[fill=blue!50] (2.2,0) rectangle (3.1,2);
+					\draw[fill=green!50] (3.6,0) rectangle (4.5,1);
+					
+					% Etiquetas con valores
+					\node[font=\scriptsize] at (1.25,3.3) {1123};
+					\node[font=\scriptsize] at (2.65,2.3) {728};
+					\node[font=\scriptsize] at (4.05,1.3) {655};
+					
+					% Etiquetas de métodos
+					\node[below,font=\scriptsize] at (1.25,0) {General};
+					\node[below,font=\scriptsize] at (2.65,0) {MTZ};
+					\node[below,font=\scriptsize] at (4.05,0) {Flujos};
+				\end{scope}
+				
+				% Gráfico de barras - GAP (con más separación)
+				\begin{scope}[yshift=-5.5cm]
+					\draw[thick] (0,0) -- (5,0);
+					\draw[thick] (0,0) -- (0,3);
+					\node[above,font=\footnotesize] at (2.5,3.2) {GAP (\%)};
+					
+					\draw[fill=red!50] (0.8,0) rectangle (1.7,2.8);
+					\draw[fill=blue!50] (2.2,0) rectangle (3.1,2);
+					\draw[fill=green!50] (3.6,0) rectangle (4.5,0.7);
+					
+					% Etiquetas con valores
+					\node[font=\scriptsize] at (1.25,3.1) {9.21\%};
+					\node[font=\scriptsize] at (2.65,2.3) {6.62\%};
+					\node[font=\scriptsize] at (4.05,1) {1.49\%};
+					
+					% Etiquetas de métodos
+					\node[below,font=\scriptsize] at (1.25,0) {General};
+					\node[below,font=\scriptsize] at (2.65,0) {MTZ};
+					\node[below,font=\scriptsize] at (4.05,0) {Flujos};
+				\end{scope}
+			\end{tikzpicture}
+		\end{columns}
+	\end{frame}
+	
+	\end{document}
