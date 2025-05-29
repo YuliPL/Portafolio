@@ -1,0 +1,4 @@
+@echo off
+cd /d "C:\INGENIERIA ESTADISTICA E INFORMATICA - UNAP\QUINTO SEMESTRE\METODOS DE OPTIMIZACION\PORTAFOLIO"
+shiny run --reload app_sis_ecu.py
+pause
