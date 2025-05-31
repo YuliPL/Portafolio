@@ -1,0 +1,108 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\geometry{margin=2.5cm}
+
+\title{Sistema de Ecuaciones Lineales}
+\author{
+	Angello Marcelo Zamora Valencia\thanks{Universidad Nacional del Altiplano Puno} \and 
+	Mario Wilfredo Ramirez Puma\thanks{Facultad de Ingeniería Estadística e Informática} \and 
+	Etzel Yuliza Peralta Lopez \and 
+	Nestor Ademir Ruelas Yana
+}
+\date{} % Fecha eliminada
+
+\begin{document}
+	
+	\maketitle
+	
+	\section{Introducción}
+	
+	Los sistemas de ecuaciones lineales son fundamentales en álgebra lineal y tienen aplicaciones en diversas áreas como ingeniería, física, economía y más. Un sistema de ecuaciones lineales puede representarse matricialmente como $Ax = b$, donde $A$ es la matriz de coeficientes, $x$ es el vector de incógnitas y $b$ es el vector de términos independientes.
+	
+	\section{Explicación del Programa}
+	
+	El programa implementado en Python utiliza la biblioteca \texttt{NumPy} para resolver sistemas de ecuaciones lineales. A continuación se detalla su funcionamiento:
+	
+	\subsection{Entrada de Datos}
+	
+	\begin{itemize}
+		\item El usuario ingresa el número de incógnitas ($n$).
+		\item Se solicitan los coeficientes de cada ecuación, que se almacenan en la matriz $A$.
+		\item Se ingresan los términos independientes, que se almacenan en el vector $b$.
+	\end{itemize}
+	
+	\subsection{Procesamiento}
+	
+	\begin{itemize}
+		\item Los datos se convierten en \textit{arrays} de NumPy para su manipulación matricial.
+		\item Se utiliza la función \texttt{np.linalg.solve()} para resolver el sistema.
+	\end{itemize}
+	
+	\subsection{Salida de Resultados}
+	
+	\begin{itemize}
+		\item Si el sistema tiene solución única, se muestran los valores de las incógnitas.
+		\item Si el sistema no tiene solución única (matriz singular o incompatible), se muestra un mensaje de error.
+	\end{itemize}
+	
+	\section{Teoría Matemática}
+	
+	Un sistema de ecuaciones lineales puede tener:
+	
+	\begin{itemize}
+		\item \textbf{Solución única:} Cuando la matriz $A$ es invertible (determinante no nulo).
+		\item \textbf{Infinitas soluciones:} Cuando el sistema es compatible indeterminado.
+		\item \textbf{Ninguna solución:} Cuando el sistema es incompatible.
+	\end{itemize}
+	
+	El método implementado utiliza descomposición LU internamente, que es numéricamente estable para la mayoría de matrices.
+	
+	\section{Casos de Uso}
+	
+	Este programa puede utilizarse para:
+	
+	\begin{itemize}
+		\item Resolver problemas de circuitos eléctricos (leyes de Kirchhoff).
+		\item Balancear ecuaciones químicas.
+		\item Modelar problemas económicos (oferta y demanda).
+		\item Resolver sistemas mecánicos (equilibrio de fuerzas).
+	\end{itemize}
+	
+	\section{Ejemplo de Ejecución}
+	
+	Para el sistema:
+	
+	\[
+	\begin{cases}
+		2x + y = 5 \\
+		x - y = 1
+	\end{cases}
+	\]
+	
+	El usuario ingresaría:
+	
+	\begin{itemize}
+		\item Número de incógnitas: 2
+		\item Coeficientes ecuación 1: 2 1
+		\item Coeficientes ecuación 2: 1 -1
+		\item Términos independientes: 5 1
+	\end{itemize}
+	
+	La solución sería: $x = 2$, $y = 1$.
+	
+	\section{Bibliografía}
+	
+	\begin{enumerate}
+		\item Strang, G. (2016). \textit{Introduction to Linear Algebra}. Wellesley-Cambridge Press.
+		\item Burden, R. L., \& Faires, J. D. (2010). \textit{Numerical Analysis} (9th ed.). Cengage Learning.
+		\item NumPy Documentation. \texttt{numpy.linalg.solve}. \url{https://numpy.org/doc/stable/reference/generated/numpy.linalg.solve.html}
+		\item Anton, H., \& Rorres, C. (2010). \textit{Elementary Linear Algebra: Applications Version} (10th ed.). Wiley.
+	\end{enumerate}
+	
+\end{document}
