@@ -1,0 +1,73 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{float}
+\usepackage{geometry}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{booktabs}
+
+\geometry{margin=2.5cm}
+
+\titleformat{\section}
+{\normalfont\Large\bfseries}{\thesection}{1em}{}
+
+\title{Predicción de Montos Girados con Aprendizaje Automático}
+\author{Etzel Yuliza Peralta López}
+\date{}
+
+\begin{document}
+	
+	\maketitle
+	
+	\section*{Resultados del Modelo de Predicción}
+	
+	El modelo fue entrenado utilizando técnicas de optimización de hiperparámetros con \textbf{Optuna}, aplicando diferentes algoritmos de regresión. El algoritmo que obtuvo el mejor desempeño fue \textbf{Ridge}.
+	
+	\vspace{1em}
+	\noindent\textbf{Métricas de Evaluación}:
+	\begin{itemize}
+		\item Mejor algoritmo: \textbf{Ridge}
+		\item Mejor score (error cuadrático medio negativo): \textbf{-240,510,864,901.58}
+		\item Coeficiente de determinación \( R^2 \): \textbf{0.999}
+		\item Error promedio absoluto: \textbf{0.19 millones de soles}
+	\end{itemize}
+	
+	\vspace{1em}
+	Estos resultados indican que el modelo tiene un desempeño \textbf{excelente} al predecir los montos girados en función del presupuesto institucional modificado (PIM), departamento, sector y año.
+	
+	\section*{Visualización del Desempeño del Modelo}
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.95\textwidth]{img/Imagen1.png}
+		\caption{Visualización del rendimiento del modelo: predicción vs. valores reales, análisis de errores y evolución del score durante la optimización.}
+	\end{figure}
+	
+	\vspace{1em}
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.7\textwidth]{img/Imagen2.png}
+		\caption{Resultados finales: R², error promedio y validación del rendimiento del mejor modelo.}
+	\end{figure}
+	
+	\vspace{1em}
+	\noindent\textbf{Interpretación de los gráficos:}
+	\begin{itemize}
+		\item \textbf{Predicción vs Real:} Los datos se alinean sobre la línea ideal, lo cual indica un ajuste casi perfecto.
+		\item \textbf{Distribución de errores:} Centrada cerca de cero y con baja dispersión.
+		\item \textbf{Evolución del score:} El proceso de búsqueda de Optuna logra converger rápidamente.
+		\item \textbf{Resumen final:} Se valida el rendimiento del modelo y se muestra su capacidad predictiva.
+	\end{itemize}
+	
+	\section*{Interpretación Final}
+	
+	\textcolor{green!50!black}{\textbf{Excelente}}. El modelo presenta un altísimo nivel de precisión. Con un \( R^2 = 0.999 \) y un error promedio de apenas \textbf{0.19 millones de soles}, constituye una herramienta poderosa para apoyar la planificación y el análisis presupuestal.
+	
+	\vspace{1em}
+	\textcolor{blue!70!black}{\textbf{El modelo está listo para ser utilizado}} con fines predictivos en la gestión de recursos públicos.
+	
+\end{document}
