@@ -1,0 +1,176 @@
+\documentclass{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{amsmath, amssymb}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{multicol}
+\usetheme{Madrid}
+\usecolortheme{seahorse}
+
+\title{\textbf{El Método de Lagrange} \\ \large Aplicando la Optimización}
+\author{}
+\date{}
+
+\begin{document}
+	
+	% PORTADA
+	\begin{frame}
+		\titlepage
+	\end{frame}
+	
+	% INTRODUCCIÓN
+	\begin{frame}{¿Qué es el Método de Lagrange?}
+		\begin{itemize}
+			\item Técnica matemática para optimizar funciones con restricciones.
+			\item Se usa cuando se desea maximizar o minimizar \( f(x, y, \dots) \) sujeto a \( g(x, y, \dots) = c \).
+			\item Se introduce una nueva variable: el \textbf{multiplicador de Lagrange} \( \lambda \).
+		\end{itemize}
+	\end{frame}
+	
+	% PASOS DEL MÉTODO
+	\begin{frame}{¿Cómo funciona el Método?}
+		\begin{block}{Pasos generales}
+			\begin{enumerate}
+				\item Definir función objetivo \( f(x, y) \) y restricción \( g(x, y) = c \).
+				\item Construir:
+				\[
+				\mathcal{L}(x, y, \lambda) = f(x, y) - \lambda (g(x, y) - c)
+				\]
+				\item Derivar: \( \frac{\partial \mathcal{L}}{\partial x} = 0, \frac{\partial \mathcal{L}}{\partial y} = 0, \frac{\partial \mathcal{L}}{\partial \lambda} = 0 \)
+				\item Resolver el sistema de ecuaciones.
+			\end{enumerate}
+		\end{block}
+	\end{frame}
+	
+	% EJEMPLO MATEMÁTICO
+	\begin{frame}{Ejemplo Matemático Paso a Paso}
+		\textbf{Maximizar:} \( f(x, y) = xy \quad \) \textbf{Sujeto a:} \( x + y = 10 \)
+		
+		\vspace{0.5em}
+		\begin{block}{Lagrangiana}
+			\[
+			\mathcal{L}(x, y, \lambda) = xy - \lambda(x + y - 10)
+			\]
+		\end{block}
+		
+		\begin{block}{Derivadas}
+			\begin{align*}
+				\frac{\partial \mathcal{L}}{\partial x} &= y - \lambda = 0 \Rightarrow y = \lambda \\
+				\frac{\partial \mathcal{L}}{\partial y} &= x - \lambda = 0 \Rightarrow x = \lambda \\
+				\frac{\partial \mathcal{L}}{\partial \lambda} &= -(x + y - 10) = 0 \Rightarrow x + y = 10
+			\end{align*}
+		\end{block}
+		
+		\begin{block}{Resultado}
+			\[
+			x = y = 5 \Rightarrow f(5,5) = 25
+			\]
+		\end{block}
+	\end{frame}
+	
+	% GRÁFICO
+	\begin{frame}{Visualización Geométrica}
+		\centering
+		\begin{tikzpicture}[scale=1]
+			\draw[->] (0,0) -- (5.5,0) node[right] {\(x\)};
+			\draw[->] (0,0) -- (0,5.5) node[above] {\(y\)};
+			\draw[blue, thick] (0,5) -- (5,0) node[below right] {\(x + y = 5\)};
+			\draw[red, dashed, domain=0.8:4.5] plot (\x,{2.5/\x});
+			\node[blue] at (2.3,2.5) {\scriptsize Restricción};
+			\node[red] at (3.2,1.4) {\scriptsize Curvas \(f(x,y)\)};
+		\end{tikzpicture}
+		
+		\vspace{0.5em}
+		\textit{El óptimo se encuentra cuando la curva de nivel es tangente a la restricción.}
+	\end{frame}
+	
+	% EJEMPLO REAL
+	\begin{frame}{Ejemplo Real: Publicidad}
+		\begin{columns}
+			\column{0.5\textwidth}
+			\begin{block}{Datos}
+				\begin{itemize}
+					\item Presupuesto: S/ 1000
+					\item Redes sociales (\(x\)): 3 clientes/sol
+					\item Radio (\(y\)): 2 clientes/sol
+				\end{itemize}
+			\end{block}
+			
+			\column{0.5\textwidth}
+			\begin{block}{Modelo}
+				\[
+				x + y = 1000,\quad f(x, y) = 3x + 2y
+				\]
+			\end{block}
+		\end{columns}
+		
+		\vspace{0.5em}
+		\begin{block}{Resultado}
+			\[
+			\lambda_x = 3,\quad \lambda_y = 2 \Rightarrow 3 \ne 2
+			\Rightarrow \text{ invertir todo en } x
+			\]
+			\[
+			x = 1000,\quad y = 0 \Rightarrow f = 3000 \text{ clientes}
+			\]
+		\end{block}
+	\end{frame}
+	
+	% INTERPRETACIÓN DE LAMBDA
+	\begin{frame}{¿Qué representa el multiplicador \( \lambda \)?}
+		\begin{itemize}
+			\item Mide el cambio en el valor óptimo si se relaja la restricción.
+			\item Ejemplo: si \( \lambda = 5 \), aumentar en 1 unidad el recurso genera 5 unidades más de beneficio.
+			\item En economía: se interpreta como el \textbf{valor marginal}.
+		\end{itemize}
+	\end{frame}
+	
+	% APLICACIONES
+	\begin{frame}{Aplicaciones del Método de Lagrange}
+		\begin{multicols}{2}
+			\begin{itemize}
+				\item Economía
+				\item Ingeniería
+				\item Machine Learning
+				\item Logística
+				\item Transporte y distribución
+				\item Diseño estructural
+			\end{itemize}
+		\end{multicols}
+		\vspace{1em}
+		\centering
+		\textit{Utilizado donde hay que optimizar bajo condiciones reales.}
+	\end{frame}
+	
+	% AMPLIACIONES
+	\begin{frame}{Ampliaciones del Método}
+		\begin{itemize}
+			\item Si hay más restricciones:
+			\[
+			\mathcal{L} = f - \lambda_1(g_1 - c_1) - \lambda_2(g_2 - c_2)
+			\]
+			\item Base del método de Karush-Kuhn-Tucker (KKT)
+			\item Ampliamente usado en optimización no lineal y programación convexa.
+		\end{itemize}
+	\end{frame}
+	
+	% CONCLUSIÓN
+	\begin{frame}{Conclusión}
+		\begin{itemize}
+			\item El Método de Lagrange es clave para optimizar con restricciones.
+			\item Se basa en la tangencia de gradientes: \( \nabla f = \lambda \nabla g \)
+			\item Tiene aplicación práctica en múltiples disciplinas.
+		\end{itemize}
+		\vspace{1em}
+		\centering
+		\textbf{Una herramienta esencial para el análisis y la toma de decisiones.}
+	\end{frame}
+	
+	% FINAL
+	\begin{frame}
+		\centering
+		\Huge ¡Gracias por tu atención!
+	\end{frame}
+	
+\end{document}
